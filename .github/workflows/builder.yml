@@ -1,0 +1,22 @@
+name: Builder
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install crosstool-ng
+      run: |
+        wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.24.0.tar.bz2
+        tar -xf crosstool-ng-1.24.0.tar.bz2
+        cd crosstool-ng-1.24.0/
+        ./configure --enable-local
+        make
+    - name: Configure toolchain
+      run: ./crosstool-ng-1.24.0/ct-ng defconfig
+    - name: Build toolchain
+      run: ./crosstool-ng-1.24.0/ct-ng build
