@@ -18,6 +18,6 @@ jobs:
         ./configure --enable-local
         make
     - name: Configure toolchain
-      run: ./crosstool-ng-1.24.0/ct-ng defconfig
+      run: ./crosstool-ng-1.24.0/ct-ng V=1 defconfig
     - name: Build toolchain
-      run: ./crosstool-ng-1.24.0/ct-ng build
+      run: ./crosstool-ng-1.24.0/ct-ng V=1 build
