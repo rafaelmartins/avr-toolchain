@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install crosstool-ng
       run: |
-        sudo apt-get install -y flex
+        sudo apt-get install -y flex makeinfo
         wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.24.0.tar.bz2
         tar -xf crosstool-ng-1.24.0.tar.bz2
         cd crosstool-ng-1.24.0/
