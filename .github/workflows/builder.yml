@@ -1,22 +1,21 @@
-name: Builder
-
-on: [push]
+name: yatr
+on:
+  - push
 
 jobs:
-  build:
+  yatr:
+    runs-on: ubuntu-18.04
 
-    runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v1
-    - name: Install crosstool-ng
-      run: |
-        wget http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.24.0.tar.bz2
-        tar -xf crosstool-ng-1.24.0.tar.bz2
-        cd crosstool-ng-1.24.0/
-        ./configure --enable-local
-        make
-    - name: Configure toolchain
-      run: ./crosstool-ng-1.24.0/ct-ng defconfig
-    - name: Build toolchain
-      run: ./crosstool-ng-1.24.0/ct-ng build
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Install dependencies
+        run: sudo apt install -y flex texinfo help2man libtool-bin libncurses-dev
+
+      - name: Run yatr
+        env:
+          TARGET: "dist-linux-amd64"
+          CT_NG_VERSION: "1.24.0"
+          DISTFILES_URL: "${{ secrets.DISTFILES_URL }}"
+        run: curl -sSf https://yatr.rgm.io/run.sh | bash

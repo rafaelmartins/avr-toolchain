@@ -1,0 +1,4 @@
+targets:
+    dist-linux-amd64:
+        task_script: scripts/ci.sh
+        archive_filter: "*avr-toolchain-*.tar.xz"
