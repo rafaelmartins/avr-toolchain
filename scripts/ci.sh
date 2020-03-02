@@ -14,7 +14,7 @@ popd > /dev/null
 pushd "${SRCDIR}" > /dev/null
 "${BUILDDIR}/crosstool-ng-${CT_NG_VERSION}/ct-ng" defconfig
 CT_PREFIX="${BUILDDIR}/prefix" "${BUILDDIR}/crosstool-ng-${CT_NG_VERSION}/ct-ng" build
-tar -cJvf "${BUILDDIR}/${PN}-${PV}.tar.xz" -C "${BUILDDIR}/prefix" avr
+tar -cJvf "${BUILDDIR}/${PN}-${TARGET/dist-/}-${PV}.tar.xz" -C "${BUILDDIR}/prefix" avr
 popd > /dev/null
 
 rm -rf "${BUILDDIR}/.build"
