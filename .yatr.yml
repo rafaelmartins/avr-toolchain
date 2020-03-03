@@ -1,3 +1,6 @@
+default_configure_args:
+    - version-date
+
 targets:
     dist-linux-amd64:
         task_script: scripts/ci.sh
