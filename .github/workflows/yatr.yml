@@ -16,6 +16,6 @@ jobs:
       - name: Run yatr
         env:
           TARGET: "dist-linux-amd64"
-          CT_NG_COMMIT: "c969be1880f99b6da4d98afd7bda641b7868a717"
+          CT_NG_COMMIT: "99ce9d38611d959076c7927ba3da428a28a54f76"
           DISTFILES_URL: "${{ secrets.DISTFILES_URL }}"
         run: curl -sSf https://yatr.rgm.io/run.sh | bash
