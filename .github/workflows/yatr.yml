@@ -17,5 +17,6 @@ jobs:
         env:
           TARGET: dist-linux-amd64
           CT_NG_COMMIT: "8fa98eeeff9bc53478d97ef722f366fea151ae64"
+          AVR_DX_PACK_VERSION: "2.1.146"
           DISTFILES_URL: "${{ secrets.DISTFILES_URL }}"
         run: curl -sSf https://yatr.rgm.io/run.sh | bash

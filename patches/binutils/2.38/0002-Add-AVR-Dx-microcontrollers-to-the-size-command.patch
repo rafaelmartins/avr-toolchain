@@ -1,0 +1,58 @@
+From 7277aae571fbb9b7159309ccd08953a483283a4a Mon Sep 17 00:00:00 2001
+From: "Rafael G. Martins" <rafael@rafaelmartins.eng.br>
+Date: Wed, 6 Jul 2022 00:24:21 +0200
+Subject: [PATCH 2/2] Add AVR Dx microcontrollers to the size command
+
+---
+ binutils/size.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/binutils/size.c b/binutils/size.c
+index dc9fe7f72ef..de128c8a96f 100644
+--- a/binutils/size.c
++++ b/binutils/size.c
+@@ -310,6 +310,41 @@ avr_device_t avr[] =
+ 
+ 	{"attiny4",       AVR512,  32UL,   0UL},
+ 	{"attiny5",       AVR512,  32UL,   0UL},
++
++	{"avr16dd14",     AVR16K,  AVR2K,  AVR256},
++	{"avr16dd20",     AVR16K,  AVR2K,  AVR256},
++	{"avr16dd28",     AVR16K,  AVR2K,  AVR256},
++	{"avr16dd32",     AVR16K,  AVR2K,  AVR256},
++	{"avr32da28",     AVR32K,  AVR4K,  AVR512},
++	{"avr32da32",     AVR32K,  AVR4K,  AVR512},
++	{"avr32da48",     AVR32K,  AVR4K,  AVR512},
++	{"avr32db28",     AVR32K,  AVR4K,  AVR512},
++	{"avr32db32",     AVR32K,  AVR4K,  AVR512},
++	{"avr32db48",     AVR32K,  AVR4K,  AVR512},
++	{"avr32dd14",     AVR32K,  AVR4K,  AVR256},
++	{"avr32dd20",     AVR32K,  AVR4K,  AVR256},
++	{"avr32dd28",     AVR32K,  AVR4K,  AVR256},
++	{"avr32dd32",     AVR32K,  AVR4K,  AVR256},
++	{"avr64da28",     AVR64K,  AVR8K,  AVR512},
++	{"avr64da32",     AVR64K,  AVR8K,  AVR512},
++	{"avr64da48",     AVR64K,  AVR8K,  AVR512},
++	{"avr64da64",     AVR64K,  AVR8K,  AVR512},
++	{"avr64db28",     AVR64K,  AVR8K,  AVR512},
++	{"avr64db32",     AVR64K,  AVR8K,  AVR512},
++	{"avr64db48",     AVR64K,  AVR8K,  AVR512},
++	{"avr64db64",     AVR64K,  AVR8K,  AVR512},
++	{"avr64dd14",     AVR64K,  AVR8K,  AVR256},
++	{"avr64dd20",     AVR64K,  AVR8K,  AVR256},
++	{"avr64dd28",     AVR64K,  AVR8K,  AVR256},
++	{"avr64dd32",     AVR64K,  AVR8K,  AVR256},
++	{"avr128da28",    AVR128K, AVR16K, AVR512},
++	{"avr128da32",    AVR128K, AVR16K, AVR512},
++	{"avr128da48",    AVR128K, AVR16K, AVR512},
++	{"avr128da64",    AVR128K, AVR16K, AVR512},
++	{"avr128db28",    AVR128K, AVR16K, AVR512},
++	{"avr128db32",    AVR128K, AVR16K, AVR512},
++	{"avr128db48",    AVR128K, AVR16K, AVR512},
++	{"avr128db64",    AVR128K, AVR16K, AVR512},
+ };
+ 
+ static char *avrmcu = NULL;
+-- 
+2.35.1
+
