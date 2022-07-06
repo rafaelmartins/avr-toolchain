@@ -32,6 +32,9 @@ for d in gcc/dev/*/avr*; do
 done
 popd > /dev/null
 
+mkdir -p "${BUILDDIR}/prefix/avr/share/licenses/atpack"
+cp -v "${SRCDIR}/LICENSE.atpack" "${BUILDDIR}/prefix/avr/share/licenses/atpack/LICENSE"
+
 tar -cJvf "${BUILDDIR}/${PN}-${TARGET/dist-/}-${PV}.tar.xz" -C "${BUILDDIR}/prefix" avr
 popd > /dev/null
 
