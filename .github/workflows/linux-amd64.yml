@@ -110,9 +110,9 @@ jobs:
             pushd tmp > /dev/null
             wget -q "http://packs.download.atmel.com/Atmel.${p}.atpack"
             unzip "Atmel.${p}.atpack"
-            mkdir -p ../prefix/avr/avr/include/avr ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs
-            cp -rv include/avr ../prefix/avr/avr/include/avr
-            cp -v gcc/dev/*/device-specs/* ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs
+            mkdir -p ../prefix/avr/avr/include ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs
+            cp -rv include/avr ../prefix/avr/avr/include/
+            cp -v gcc/dev/*/device-specs/* ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs/
             for d in gcc/dev/*/avr*; do
               dir="$(basename $d)"
               mkdir -p "../prefix/avr/avr/lib/${dir}/"
@@ -151,6 +151,9 @@ jobs:
 
       - name: Build toolchain
         run: CT_PREFIX="$(pwd)/prefix" ct-ng build
+
+        # for testing without building toolchain
+        #run: ct-ng show-config && mkdir prefix && touch prefix/.keep
 
       - name: Create pristine tarball
         run: tar -cJvf avr-toolchain-linux-amd64.tar.xz -C prefix avr
