@@ -33,9 +33,9 @@ jobs:
     steps:
       - name: Download crosstool-ng
         run: |
-          wget -q https://github.com/rafaelmartins/crosstool-ng-build/releases/download/crosstool-ng-${CROSSTOOL_NG_VERSION}/crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz{,.sha512}
-          sha512sum -c crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz.sha512
-          sudo tar -xf crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz -C /
+          wget -q https://github.com/rafaelmartins/crosstool-ng-build/releases/download/crosstool-ng-${CROSSTOOL_NG_VERSION}/crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz{,.sha512}
+          sha512sum -c crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz.sha512
+          sudo tar -xf crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz -C /
 
       - name: Check out code
         uses: actions/checkout@v3
@@ -137,9 +137,9 @@ jobs:
     steps:
       - name: Download crosstool-ng
         run: |
-          wget -q https://github.com/rafaelmartins/crosstool-ng-build/releases/download/crosstool-ng-${CROSSTOOL_NG_VERSION}/crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz{,.sha512}
-          sha512sum -c crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz.sha512
-          sudo tar -xf crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-x64.tar.xz -C /
+          wget -q https://github.com/rafaelmartins/crosstool-ng-build/releases/download/crosstool-ng-${CROSSTOOL_NG_VERSION}/crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz{,.sha512}
+          sha512sum -c crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz.sha512
+          sudo tar -xf crosstool-ng-${CROSSTOOL_NG_VERSION}-linux-amd64.tar.xz -C /
 
       - name: Check out code
         uses: actions/checkout@v3
