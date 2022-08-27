@@ -153,7 +153,7 @@ jobs:
         run: CT_PREFIX="$(pwd)/prefix" ct-ng build
 
         # for testing without building toolchain
-        #run: ct-ng show-config && mkdir prefix && touch prefix/.keep
+        #run: ct-ng show-config && mkdir -p prefix/avr && touch prefix/avr/.keep
 
       - name: Create pristine tarball
         run: tar -cJvf avr-toolchain-linux-amd64.tar.xz -C prefix avr
