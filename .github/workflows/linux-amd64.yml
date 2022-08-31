@@ -55,7 +55,7 @@ jobs:
           echo >> release.md
           for d in patches/*; do
             pn="$(basename "$d")"
-            pv="$(grep -i "^CT_${pn}_VERSION" .config | sed 's/^.*="\([0-9.]*\)"$/\1/')"
+            pv="$(grep -i "^CT_${pn/-/_}_VERSION" .config | sed 's/^.*="\([0-9.]*\)"$/\1/')"
             if [[ ! -d "${d}/${pv}" ]]; then
               continue
             fi
