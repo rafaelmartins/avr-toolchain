@@ -1,7 +1,7 @@
 From 740b18a4d0eaf4bac70489c37f555f752754adcc Mon Sep 17 00:00:00 2001
 From: "Rafael G. Martins" <rafael@rafaelmartins.eng.br>
 Date: Wed, 6 Jul 2022 00:24:21 +0200
-Subject: [PATCH 2/2] Add AVR Dx microcontrollers to the size command
+Subject: [PATCH 2/3] Add AVR Dx microcontrollers to the size command
 
 ---
  binutils/size.c | 35 +++++++++++++++++++++++++++++++++++

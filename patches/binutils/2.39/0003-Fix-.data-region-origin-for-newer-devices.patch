@@ -1,0 +1,42 @@
+From 54042fd741e4a0105c17def6ac168d9acbcfa84a Mon Sep 17 00:00:00 2001
+From: "Rafael G. Martins" <rafael@rafaelmartins.eng.br>
+Date: Wed, 31 Aug 2022 02:29:01 +0200
+Subject: [PATCH 3/3] Fix .data region origin for newer devices
+
+For new devices, Microchip decided to change the way the data region
+origin is defined in the device-specs. This patch fixes the linker
+script template, to use the value from a symbol exported in the crt*
+libraries (included in the atpacks), if defined.
+
+This patch is based on another patch from the arduino/toolchian-avr
+repository:
+
+https://github.com/arduino/toolchain-avr/blob/26d5bd033241d834c9c01075aa8ea17dda62c4ca/binutils-patches/00-binutils-data_region_length.patch
+---
+ ld/scripttempl/avr.sc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ld/scripttempl/avr.sc b/ld/scripttempl/avr.sc
+index 026871fc6cf..da82548ade7 100644
+--- a/ld/scripttempl/avr.sc
++++ b/ld/scripttempl/avr.sc
+@@ -28,6 +28,7 @@ EOF
+ 
+ test -n "${RELOCATING}" && cat <<EOF
+ __TEXT_REGION_LENGTH__ = DEFINED(__TEXT_REGION_LENGTH__) ? __TEXT_REGION_LENGTH__ : $TEXT_LENGTH;
++__DATA_REGION_ORIGIN__ = DEFINED(__DATA_REGION_ORIGIN__) ? __DATA_REGION_ORIGIN__ : $DATA_ORIGIN;
+ __DATA_REGION_LENGTH__ = DEFINED(__DATA_REGION_LENGTH__) ? __DATA_REGION_LENGTH__ : $DATA_LENGTH;
+ ${EEPROM_LENGTH+__EEPROM_REGION_LENGTH__ = DEFINED(__EEPROM_REGION_LENGTH__) ? __EEPROM_REGION_LENGTH__ : $EEPROM_LENGTH;}
+ __FUSE_REGION_LENGTH__ = DEFINED(__FUSE_REGION_LENGTH__) ? __FUSE_REGION_LENGTH__ : $FUSE_LENGTH;
+@@ -38,7 +39,7 @@ ${RODATA_PM_OFFSET+__RODATA_PM_OFFSET__ = DEFINED(__RODATA_PM_OFFSET__) ? __RODA
+ MEMORY
+ {
+   text   (rx)   : ORIGIN = 0, LENGTH = __TEXT_REGION_LENGTH__
+-  data   (rw!x) : ORIGIN = $DATA_ORIGIN, LENGTH = __DATA_REGION_LENGTH__
++  data   (rw!x) : ORIGIN = __DATA_REGION_ORIGIN__, LENGTH = __DATA_REGION_LENGTH__
+ ${EEPROM_LENGTH+  eeprom (rw!x) : ORIGIN = 0x810000, LENGTH = __EEPROM_REGION_LENGTH__}
+   $FUSE_NAME      (rw!x) : ORIGIN = 0x820000, LENGTH = __FUSE_REGION_LENGTH__
+   lock      (rw!x) : ORIGIN = 0x830000, LENGTH = __LOCK_REGION_LENGTH__
+-- 
+2.35.1
+
