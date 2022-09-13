@@ -29,7 +29,7 @@ defaults:
 
 jobs:
   config:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Download crosstool-ng
         run: |
@@ -84,7 +84,7 @@ jobs:
             release.md
 
   atpacks:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: config
     steps:
       - name: Check out code
@@ -133,7 +133,7 @@ jobs:
           path: atpacks.tar.xz
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs: config
     steps:
       - name: Download crosstool-ng
@@ -166,7 +166,7 @@ jobs:
           path: avr-toolchain-linux-amd64.tar.xz
 
   integration:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs:
       - atpacks
       - build
@@ -208,7 +208,7 @@ jobs:
 
   deploy:
     environment: releases
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     needs:
       - config
       - integration
