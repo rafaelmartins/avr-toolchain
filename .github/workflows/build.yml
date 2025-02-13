@@ -113,10 +113,10 @@ jobs:
           cat release-${{ steps.os_arch.outputs.os_arch }}.md
 
       - name: Build toolchain
-        # run: CT_PREFIX="$(pwd)/prefix" ct-ng build
+        run: CT_PREFIX="$(pwd)/prefix" ct-ng build
 
         # for testing without building toolchain
-        run: ct-ng show-config && mkdir -p prefix/avr && touch prefix/avr/.keep
+        # run: ct-ng show-config && mkdir -p prefix/avr && touch prefix/avr/.keep
 
       - name: Download atpacks and extract
         run: |
