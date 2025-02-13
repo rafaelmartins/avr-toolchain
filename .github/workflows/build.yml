@@ -46,7 +46,7 @@ jobs:
         run: |
           brew install autoconf automake bash binutils coreutils gawk gnu-sed libtool help2man texinfo
           hdiutil create ./crosstool.dmg -volname "ctng" -size 40g -type SPARSE -fs "Case-sensitive APFS"
-          mount ./crosstool.dmg.sparseimage
+          hdiutil mount -noverify ./crosstool.dmg.sparseimage
           rm -rf "${{ github.workspace }}"
           ln -s /Volumes/ctng "${{ github.workspace }}"
 
