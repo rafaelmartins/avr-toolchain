@@ -1,0 +1,194 @@
+name: Build AVR toolchain
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build.yml'
+      - 'patches/**'
+      - 'defconfig'
+  workflow_dispatch:
+
+env:
+  AVR_ATAUTOMOTIVE_PACK_VERSION: "2.0.214"
+  AVR_ATMEGA_PACK_VERSION: "2.2.509"
+  AVR_ATTINY_PACK_VERSION: "2.0.368"
+  AVR_DX_PACK_VERSION: "2.6.303"
+  AVR_EX_PACK_VERSION: "2.10.205"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install dependencies (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: sudo apt install -y help2man libtool-bin
+
+      - name: Install dependencies (MacOS)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: brew install autoconf automake bash binutils coreutils gawk gnu-sed libtool help2man texinfo
+
+      - name: Get os/arch
+        id: os_arch
+        run: |
+          if [[ "${{ matrix.os }}" = ubuntu-* ]]; then
+            echo "os_arch=linux-$(uname -m)" >> $GITHUB_OUTPUT
+          else
+            echo "os_arch=darwin-$(uname -m)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Check out crosstool-ng
+        uses: actions/checkout@v4
+        with:
+          repository: crosstool-ng/crosstool-ng
+          path: crosstool-ng
+          ref: "1e9bf8151513b054f60f34bc89507c31dc242cf0"
+
+      - name: Build crosstool-ng
+        working-directory: crosstool-ng
+        run: |
+          export PATH="/opt/homebrew/opt/binutils/bin:$PATH"
+          ./bootstrap
+          ./configure --prefix=/usr --enable-local
+          make
+          echo "${PWD}" >> $GITHUB_PATH
+
+      - name: Generate configuration
+        run: ct-ng defconfig
+
+      - name: Generate release data
+        run: |
+          echo "## ${{ steps.os_arch.outputs.os_arch }}" >> release.md
+          echo >> release.md
+          echo "### crosstool-NG configuration" >> release.md
+          echo >> release.md
+          echo "\`\`\`" >> release.md
+          ct-ng show-config >> release.md
+          echo "\`\`\`" >> release.md
+          echo >> release.md
+          echo "### Patches" >> release.md
+          echo >> release.md
+          for d in patches/*; do
+            pn="$(basename "$d")"
+            pv="$(grep -i "^CT_${pn/-/_}_VERSION" .config | sed 's/^.*="\([0-9.]*\)"$/\1/')"
+            if [[ ! -d "${d}/${pv}" ]]; then
+              continue
+            fi
+            echo "#### ${pn}-${pv}" >> release.md
+            echo >> release.md
+            for p in "${d}/${pv}"/*.patch; do
+              echo "- [$(basename "${p}")](/patches/${pn}/${pv}/$(basename "${p}"))" >> release.md
+            done
+            echo >> release.md
+          done
+          echo "### Additional Atmel Packs Installed" >> release.md
+          echo >> release.md
+          echo "- Atmel ATautomotive Series Device Support (${AVR_ATAUTOMOTIVE_PACK_VERSION})" >> release.md
+          echo "- Atmel ATmega Series Device Support (${AVR_ATMEGA_PACK_VERSION})" >> release.md
+          echo "- Atmel ATtiny Series Device Support (${AVR_ATTINY_PACK_VERSION})" >> release.md
+          echo "- Atmel AVR-Dx Series Device Support (${AVR_DX_PACK_VERSION})" >> release.md
+          echo "- Atmel AVR-Ex Series Device Support (${AVR_EX_PACK_VERSION})" >> release.md
+          echo >> release.md
+          echo >> release.md
+          mv release.md release-${{ steps.os_arch.outputs.os_arch }}.md
+          cat release-${{ steps.os_arch.outputs.os_arch }}.md
+
+      - name: Build toolchain
+        # run: CT_PREFIX="$(pwd)/prefix" ct-ng build
+
+        # for testing without building toolchain
+        run: ct-ng show-config && mkdir -p prefix/avr && touch prefix/avr/.keep
+
+      - name: Download atpacks and extract
+        run: |
+          GCC_VER="$(grep ^CT_GCC_VERSION= .config | sed 's/^.*="\([0-9.]*\)"$/\1/')"
+          for p in "ATautomotive_DFP.${AVR_ATAUTOMOTIVE_PACK_VERSION}" \
+                   "ATmega_DFP.${AVR_ATMEGA_PACK_VERSION}" \
+                   "ATtiny_DFP.${AVR_ATTINY_PACK_VERSION}" \
+                   "AVR-Dx_DFP.${AVR_DX_PACK_VERSION}" \
+                   "AVR-Ex_DFP.${AVR_EX_PACK_VERSION}"
+          do
+            mkdir tmp
+            pushd tmp > /dev/null
+            wget -q "http://packs.download.atmel.com/Atmel.${p}.atpack"
+            unzip "Atmel.${p}.atpack"
+            mkdir -p ../prefix/avr/avr/include ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs
+            cp -rv include/avr ../prefix/avr/avr/include/
+            cp -v gcc/dev/*/device-specs/* ../prefix/avr/lib/gcc/avr/${GCC_VER}/device-specs/
+            for d in gcc/dev/*/avr*; do
+              dir="$(basename $d)"
+              mkdir -p "../prefix/avr/avr/lib/${dir}/"
+              cp -rv "${d}"/* "../prefix/avr/avr/lib/${dir}/"
+            done
+            popd > /dev/null
+            rm -rf tmp
+          done
+          mkdir -p prefix/avr/share/licenses/atpack
+          cp -v LICENSE.atpack prefix/avr/share/licenses/atpack/LICENSE
+
+      - name: Create tarball
+        run: tar -cJvf avr-toolchain-${{ steps.os_arch.outputs.os_arch }}.tar.xz -C prefix avr
+
+      - name: Upload tarball artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: avr-toolchain-${{ steps.os_arch.outputs.os_arch }}
+          path: |
+            avr-toolchain-${{ steps.os_arch.outputs.os_arch }}.tar.xz
+            release-${{ steps.os_arch.outputs.os_arch }}.md
+
+  deploy:
+    environment: releases
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Download final tarball artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Get version
+        id: date
+        run: echo "date=$(date -u +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Finalize tarballs
+        run: |
+          for tb in avr-toolchain-*.tar.xz; do
+            mv "${tb}" "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz"
+            if echo "${tb}" | grep linux &> /dev/null; then
+              sha512sum "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz" > "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz.sha512"
+            else
+              gsha512sum "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz" > "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz.sha512"
+            fi
+          done
+          cat release-*.md > release.md
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "avr-toolchain-*-${{ steps.date.outputs.date }}.tar.xz*"
+          tag: avr-toolchain-${{ steps.date.outputs.date }}
+          commit: ${{ github.sha }}
+          bodyFile: release.md
+          allowUpdates: true
+          removeArtifacts: true
