@@ -162,7 +162,7 @@ jobs:
     needs:
       - build
     steps:
-      - name: Download final tarball artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
@@ -175,11 +175,7 @@ jobs:
         run: |
           for tb in avr-toolchain-*.tar.xz; do
             mv "${tb}" "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz"
-            if echo "${tb}" | grep linux &> /dev/null; then
-              sha512sum "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz" > "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz.sha512"
-            else
-              gsha512sum "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz" > "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz.sha512"
-            fi
+            sha512sum "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz" > "$(echo "${tb}" | cut -d. -f1)-${{ steps.date.outputs.date }}.tar.xz.sha512"
           done
           cat release-*.md > release.md
 
