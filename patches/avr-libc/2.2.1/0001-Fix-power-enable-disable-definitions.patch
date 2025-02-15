@@ -1,0 +1,101 @@
+From 449c2051b59951a5938822285b20a8156cd2f8a7 Mon Sep 17 00:00:00 2001
+From: "Rafael G. Martins" <rafael@rafaelmartins.eng.br>
+Date: Wed, 31 Aug 2022 22:55:50 +0200
+Subject: [PATCH] Fix power enable/disable definitions.
+
+This patch is not mine. It is from arduino/toolchain-avr repository:
+
+https://github.com/arduino/toolchain-avr/blob/cf02331246a4cf6593d6b396529e02e4646df460/avr-libc-patches/02-power.patch
+---
+ include/avr/power.h | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/include/avr/power.h b/include/avr/power.h
+index 355b414a..4f58465c 100644
+--- a/include/avr/power.h
++++ b/include/avr/power.h
+@@ -595,6 +595,11 @@ the clock below 131.072 kHz.
+ #define power_spi_disable()             (PRR0 |= (uint8_t)(1 << PRSPI))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR0_PRSPI0)
++#define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI0))
++#define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI0))
++#endif
++
+ #if defined(__AVR_HAVE_PRR0_PRT0)
+ #define power_timer0_enable()           (PRR0 &= (uint8_t)~(1 << PRT0))
+ #define power_timer0_disable()          (PRR0 |= (uint8_t)(1 << PRT0))
+@@ -640,6 +645,11 @@ the clock below 131.072 kHz.
+ #define power_twi_disable()             (PRR0 |= (uint8_t)(1 << PRTWI))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR0_PRTWI0)
++#define power_twi_enable()              (PRR0 &= (uint8_t)~(1 << PRTWI0))
++#define power_twi_disable()             (PRR0 |= (uint8_t)(1 << PRTWI0))
++#endif
++
+ #if defined(__AVR_HAVE_PRR0_PRTWI1)
+ #define power_twi1_enable()             (PRR0 &= (uint8_t)~(1 << PRTWI1))
+ #define power_twi1_disable()            (PRR0 |= (uint8_t)(1 << PRTWI1))
+@@ -720,6 +730,11 @@ the clock below 131.072 kHz.
+ #define power_spi_disable()             (PRR1 |= (uint8_t)(1 << PRSPI))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR1_PRSPI1)
++#define power_spi1_enable()              (PRR1 &= (uint8_t)~(1 << PRSPI1))
++#define power_spi1_disable()             (PRR1 |= (uint8_t)(1 << PRSPI1))
++#endif
++
+ #if defined(__AVR_HAVE_PRR1_PRT1)
+ #define power_timer1_enable()           (PRR1 &= (uint8_t)~(1 << PRT1))
+ #define power_timer1_disable()          (PRR1 |= (uint8_t)(1 << PRT1))
+@@ -765,6 +780,11 @@ the clock below 131.072 kHz.
+ #define power_transceiver_disable()     (PRR1 |= (uint8_t)(1 << PRTRX24))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR1_PRTWI1)
++#define power_twi1_enable()             (PRR1 &= (uint8_t)~(1 << PRTWI1))
++#define power_twi1_disable()            (PRR1 |= (uint8_t)(1 << PRTWI1))
++#endif
++
+ #if defined(__AVR_HAVE_PRR1_PRUSART1)
+ #define power_usart1_enable()           (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ #define power_usart1_disable()          (PRR1 |= (uint8_t)(1 << PRUSART1))
+@@ -830,6 +850,11 @@ the clock below 131.072 kHz.
+ #define power_preamble_rssi_fifo_disable()      (PRR2 |= (uint8_t)(1 << PRSF))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR2_PRSPI1)
++#define power_spi1_enable()             (PRR2 &= (uint8_t)~(1 << PRSPI1))
++#define power_spi1_disable()            (PRR2 |= (uint8_t)(1 << PRSPI1))
++#endif
++
+ #if defined(__AVR_HAVE_PRR2_PRSPI2)
+ #define power_spi2_enable()             (PRR2 &= (uint8_t)~(1 << PRSPI2))
+ #define power_spi2_disable()            (PRR2 |= (uint8_t)(1 << PRSPI2))
+@@ -845,11 +870,21 @@ the clock below 131.072 kHz.
+ #define power_tx_modulator_disable()    (PRR2 |= (uint8_t)(1 << PRTM))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR2_PRTWI1)
++#define power_twi1_enable()             (PRR2 &= (uint8_t)~(1 << PRTWI1))
++#define power_twi1_disable()            (PRR2 |= (uint8_t)(1 << PRTWI1))
++#endif
++
+ #if defined(__AVR_HAVE_PRR2_PRTWI2)
+ #define power_twi2_enable()             (PRR2 &= (uint8_t)~(1 << PRTWI2))
+ #define power_twi2_disable()            (PRR2 |= (uint8_t)(1 << PRTWI2))
+ #endif
+ 
++#if defined(__AVR_HAVE_PRR2_PRUSART2)
++#define power_usart2_enable()           (PRR2 &= (uint8_t)~(1 << PRUSART2))
++#define power_usart2_disable()          (PRR2 |= (uint8_t)(1 << PRUSART2))
++#endif
++
+ #if defined(__AVR_HAVE_PRR2_PRXA)
+ #define power_rx_buffer_A_enable()      (PRR2 &= (uint8_t)~(1 << PRXA))
+ #define power_rx_buffer_A_disable()     (PRR2 |= (uint8_t)(1 << PRXA))
+-- 
+2.39.3 (Apple Git-146)
+

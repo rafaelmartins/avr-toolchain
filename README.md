@@ -1,7 +1,7 @@
 # avr-toolchain
 
-crosstool-NG settings for a statically-linked AVR toolchain.
+AVR open source toolchain builds for Linux and Mac, including recent atpacks.
 
-The toolchain includes GDB and patched avr-size, that shows program and data usage relative to the target microcontroller. It also includes support for the new AVR series of microcontrollers, and updated libraries for the older ones.
+The toolchain includes `avr-gdb` and a patched `avr-size` binary that shows program and data usage relative to the target microcontroller. It also includes support for the new AVR series of microcontrollers, and updated libraries for the older ones.
 
-Prebuilt binaries can be downloaded here: https://github.com/rafaelmartins/avr-toolchain/releases
+Builds are generated using GitHub Actions infrastructure, using `crosstool-ng`.
